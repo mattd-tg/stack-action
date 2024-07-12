@@ -4,6 +4,7 @@ import { MultiDirectedGraph } from 'graphology'
 import { bfsFromNode, dfs, dfsFromNode } from 'graphology-traversal'
 import type { PullRequest, Context, StackNodeAttributes } from './types'
 import { remark } from './remark'
+import { inputs } from './inputs'
 
 export async function main({
   octokit,
@@ -101,7 +102,26 @@ export async function main({
 
   const jobs: Array<() => Promise<void>> = []
 
-  getStackGraph(currentPullRequest).forEachNode((_, stackNode) => {
+  const stackGraph = getStackGraph(currentPullRequest)
+
+  const shouldSkip = () => {
+    const neighbors = stackGraph.neighbors(currentPullRequest.headRefName)
+    const allPerennialBranches = stackGraph.filterNodes(
+      (_, nodeAttributes) => nodeAttributes.type === 'perennial'
+    )
+
+    return (
+      inputs.getSkipSingleStacks() &&
+      neighbors.length === 1 &&
+      allPerennialBranches.includes(neighbors.at(0) || '')
+    )
+  }
+
+  if (shouldSkip()) {
+    return
+  }
+
+  stackGraph.forEachNode((_, stackNode) => {
     if (stackNode.type !== 'pull-request' || !stackNode.shouldPrint) {
       return
     }
