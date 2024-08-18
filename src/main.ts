@@ -133,8 +133,10 @@ export async function main({
 
   const stackGraph = getStackGraph(currentPullRequest)
 
+  const neighbors = stackGraph.neighbors(currentPullRequest.headRefName)
+
   core.info(
-    `stackGraph: ${JSON.stringify({ edges: stackGraph.edges(), currentPullRequest })}`
+    `stackGraph: ${JSON.stringify({ neighbors, edges: stackGraph.edges(currentPullRequest.headRefName), currentPullRequest })}`
   )
 
   if (inputs.getSkipSingleStacks() && stackGraph.edges().length === 0) {
