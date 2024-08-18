@@ -46692,7 +46692,11 @@ var inputs = {
     return core.getInput("github-token", { required: true, trimWhitespace: true });
   },
   getSkipSingleStacks() {
-    return core.getBooleanInput("skip-single-stacks", { required: false });
+    core.startGroup("Inputs: Skip single stacks");
+    const input = core.getBooleanInput("skip-single-stacks", { required: false });
+    core.info(input.toString());
+    core.endGroup();
+    return input;
   },
   async getMainBranch(octokit, config2, context3) {
     const {
