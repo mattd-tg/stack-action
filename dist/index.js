@@ -46879,10 +46879,9 @@ async function main({
   const jobs = [];
   const stackGraph = getStackGraph(currentPullRequest);
   const neighbors = stackGraph.neighbors(currentPullRequest.headRefName);
-  core2.info(
-    `stackGraph: ${JSON.stringify({ neighbors, edges: stackGraph.edges(currentPullRequest.headRefName), currentPullRequest })}`
-  );
-  if (inputs.getSkipSingleStacks() && stackGraph.edges().length === 0) {
+  const skip = neighbors.length === 1 && neighbors[0] === mainBranch;
+  core2.info(`stackGraph: ${JSON.stringify({ neighbors, skip, currentPullRequest })}`);
+  if (inputs.getSkipSingleStacks() && skip) {
     return;
   }
   stackGraph.forEachNode((_, stackNode) => {

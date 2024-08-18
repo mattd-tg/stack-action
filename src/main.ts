@@ -135,11 +135,11 @@ export async function main({
 
   const neighbors = stackGraph.neighbors(currentPullRequest.headRefName)
 
-  core.info(
-    `stackGraph: ${JSON.stringify({ neighbors, edges: stackGraph.edges(currentPullRequest.headRefName), currentPullRequest })}`
-  )
+  const skip = neighbors.length === 1 && neighbors[0] === mainBranch
 
-  if (inputs.getSkipSingleStacks() && stackGraph.edges().length === 0) {
+  core.info(`stackGraph: ${JSON.stringify({ neighbors, skip, currentPullRequest })}`)
+
+  if (inputs.getSkipSingleStacks() && skip) {
     return
   }
 
