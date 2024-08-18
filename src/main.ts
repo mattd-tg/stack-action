@@ -133,7 +133,9 @@ export async function main({
 
   const stackGraph = getStackGraph(currentPullRequest)
 
-  core.debug(`stackGraph: ${JSON.stringify({ edges: stackGraph.edges() })}`)
+  core.info(
+    `stackGraph: ${JSON.stringify({ edges: stackGraph.edges(), currentPullRequest })}`
+  )
 
   if (inputs.getSkipSingleStacks() && stackGraph.edges().length === 0) {
     return
